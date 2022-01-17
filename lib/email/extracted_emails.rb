@@ -13,8 +13,8 @@ module Email
     end
 
     def list
-      @sources.each { |source| @results << source.results(domain, EMAIL_REGEX) }
-      @results
+      @sources.map { |source| @results += source.results(domain, EMAIL_REGEX) }
+      @results.uniq
     end
 
     private
