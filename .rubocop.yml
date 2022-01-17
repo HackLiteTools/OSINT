@@ -18,3 +18,5 @@ Documentation:
 Security/Open:
   Enabled: true
 
+Lint/UnusedMethodArgument:
+  Enabled: false
