@@ -4,21 +4,20 @@ require "open-uri"
 
 module Source
   class GoogleSource
-    TOP_LEVEL_DOMAIN = "com"
+    BASE_URL = "https://www.google.com/search"
     LANGUAGE = "en"
     ENCODING = "UTF-8"
     PAGINATION = (10..50).step(10)
 
-    def initialize(top_level_domain = TOP_LEVEL_DOMAIN, language = LANGUAGE)
-      @top_level_domain = top_level_domain
+    def initialize(language = LANGUAGE, encoding = ENCODING)
       @language = language
-      @base_url = "https://www.google.#{top_level_domain}/search"
+      @encoding = encoding
       @results = []
     end
 
     def results(phrase, regex)
       PAGINATION.each do |page|
-        URI.parse(@base_url + "?q=#{phrase}&lr=lang_#{@language}&ie=#{ENCODING}&start=#{page}").open do |file|
+        URI.parse(BASE_URL + "?q=#{phrase}&lr=lang_#{@language}&ie=#{@encoding}&start=#{page}").open do |file|
           file.each_line do |line|
             result = line.match(regex)
             @results << result.to_s if result
