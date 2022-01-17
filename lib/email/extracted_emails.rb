@@ -13,7 +13,7 @@ module Email
     end
 
     def list
-      @sources.map { |source| @results << source.results(domain, EMAIL_REGEX) }
+      @sources.each { |source| @results << source.results(domain, EMAIL_REGEX) }
       @results
     end
 
