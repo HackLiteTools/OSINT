@@ -16,9 +16,9 @@ module Source
       @results = []
     end
 
-    def results(phrase, regex, encoding = ENCODING)
+    def results(phrase, regex)
       PAGINATION.each do |page|
-        URI.parse(@base_url + "?q=#{phrase}&lr=lang_#{@language}&ie=#{encoding}&start=#{page}").open do |file|
+        URI.parse(@base_url + "?q=#{phrase}&lr=lang_#{@language}&ie=#{ENCODING}&start=#{page}").open do |file|
           file.each_line do |line|
             result = line.match(regex)
             @results << result.to_s if result
