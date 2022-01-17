@@ -1,2 +1,3 @@
 # OSINT
-The collection and analysis of data gathered from publicly available sources
+
+The tool collecting and analyzing data gathered from publicly available sources
