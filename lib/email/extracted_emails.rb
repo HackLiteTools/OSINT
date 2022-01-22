@@ -13,14 +13,19 @@ module Email
     end
 
     def list
-      @sources.each { |source| @results += source.results(domain, EMAIL_REGEX) }
+      @sources.each do |source|
+        source.results(email_domain(@domain)).each do |result|
+          emails = result.scan(EMAIL_REGEX)
+          @results += emails unless emails.nil?
+        end
+      end
       @results.uniq
     end
 
     private
 
-    def domain
-      "@#{@domain.sub("@", "")}"
+    def email_domain(domain)
+      "@#{domain.sub("@", "")}"
     end
   end
 end
