@@ -19,23 +19,16 @@ module Source
       @user_agents = user_agents
     end
 
-    def results(phrase)
-      pages = []
-      PAGINATION.each do |page|
-        page = response(url(BASE_URL, phrase, @language, page), @user_agents).body
-        pages << page.to_s unless page.nil?
-      rescue Net::HTTPRequestTimeOut
-        retry
-      rescue Net::HTTPTooManyRequests
-        raise RuntimeError "Too many requests have been sent"
+    def responses(phrase)
+      PAGINATION.map do |pagination|
+        response(url(BASE_URL, phrase, @language, pagination), @user_agents)
       end
-      pages
     end
 
     private
 
-    def url(base_url, phrase, language, page)
-      URI.parse(base_url + "?q=#{phrase}&lr=lang_#{language.code}&start=#{page}")
+    def url(base_url, phrase, language, pagination)
+      URI.parse(base_url + "?q=#{phrase}&lr=lang_#{language.code}&start=#{pagination}")
     end
 
     def http(url)
@@ -52,8 +45,15 @@ module Source
     end
 
     def response(url, user_agents)
-      http = http(url)
-      http.request(request(url, user_agents))
+      response = http(url).request(request(url, user_agents))
+      case response
+      when Net::HTTPSuccess then response
+      when Net::HTTPRedirection then "Redirected to a captcha page"
+      when Net::HTTPRequestTimeOut then response(url, user_agents)
+      when Net::HTTPTooManyRequests then "Too many requests have been sent"
+      else
+        raise "Request failed"
+      end
     end
   end
 end

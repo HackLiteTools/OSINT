@@ -1,31 +1,40 @@
 # frozen_string_literal: true
 
 require_relative "../source/google_source"
+require "nokogiri"
 
 module Email
   class ExtractedEmails
-    EMAIL_REGEX = /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/i
-
     def initialize(domain, *sources)
       @domain = domain
       @sources = sources
-      @results = []
     end
 
     def list
-      @sources.each do |source|
-        source.results(email_domain(@domain)).each do |result|
-          emails = result.scan(EMAIL_REGEX)
-          @results += emails unless emails.nil?
-        end
+      list = @sources.map do |source|
+        list_from_source(source, email_domain(@domain))
       end
-      @results.uniq
+      list.uniq
     end
 
     private
 
+    def list_from_source(source, email_domain)
+      source.responses(email_domain).map do |response|
+        list_from_body(body(response))
+      end
+    end
+
     def email_domain(domain)
       "@#{domain.sub("@", "")}"
+    end
+
+    def list_from_body(body)
+      body.scan(/\b[A-Z0-9._-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/i)
+    end
+
+    def body(response)
+      Nokogiri::HTML(response.body).at("body").inner_html
     end
   end
 end
