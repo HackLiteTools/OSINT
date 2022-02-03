@@ -28,7 +28,8 @@ module Source
     end
 
     def sample
-      COMMON_USER_AGENTS.rotate.first
+      @user_agents.rotate!
+      @user_agents.first
     end
   end
 end
