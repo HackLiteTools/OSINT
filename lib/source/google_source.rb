@@ -9,7 +9,7 @@ module Source
   class GoogleSource
     BASE_URL = "https://www.google.com/search"
     LANGUAGE_CODE = "en"
-    PAGINATION = (10..50).step(10)
+    STEPS = (10..50).step(10)
 
     def initialize(
       language = Source::GoogleLanguage.new(LANGUAGE_CODE),
@@ -20,15 +20,15 @@ module Source
     end
 
     def responses(phrase)
-      PAGINATION.map do |pagination|
-        response(url(BASE_URL, phrase, @language, pagination), @user_agents)
+      STEPS.map do |step|
+        response(url(BASE_URL, phrase, @language, step), @user_agents)
       end
     end
 
     private
 
-    def url(base_url, phrase, language, pagination)
-      URI.parse(base_url + "?q=#{phrase}&lr=lang_#{language.code}&start=#{pagination}")
+    def url(base_url, phrase, language, step)
+      URI.parse(base_url + "?q=#{phrase}&lr=lang_#{language.code}&start=#{step}")
     end
 
     def http(url)
