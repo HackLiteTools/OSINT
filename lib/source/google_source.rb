@@ -47,7 +47,7 @@ module Source
     def response(url, user_agents)
       response = http(url).request(request(url, user_agents))
       case response
-      when Net::HTTPSuccess then response
+      when Net::HTTPOK then response
       when Net::HTTPRedirection then "Redirected to a captcha page"
       when Net::HTTPRequestTimeOut then response(url, user_agents)
       when Net::HTTPTooManyRequests then "Too many requests have been sent"
