@@ -44,12 +44,14 @@ module Source
       request
     end
 
-    def response(url, user_agents)
+    def response(url, user_agents, limit = 10)
+      raise "Number of requests exceeded limit" if limit.zero?
+
       response = http(url).request(request(url, user_agents))
       case response
       when Net::HTTPOK then response
       when Net::HTTPRedirection then "Redirected to a captcha page"
-      when Net::HTTPRequestTimeOut then response(url, user_agents)
+      when Net::HTTPRequestTimeOut then response(url, user_agents, limit - 1)
       when Net::HTTPTooManyRequests then "Too many requests have been sent"
       else
         raise "Request failed"
