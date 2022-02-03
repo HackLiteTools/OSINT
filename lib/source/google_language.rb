@@ -7,6 +7,8 @@ module Source
       ko lv lt no fa pl pt ro ru sr sk sl es sv th tr uk vi zh-CN zh-TW
     ].freeze
 
+    private_constant :VALID_LANGUAGE_CODES
+
     def initialize(language_code)
       @language_code = language_code
     end

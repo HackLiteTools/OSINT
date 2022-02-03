@@ -11,6 +11,8 @@ module Source
     LANGUAGE_CODE = "en"
     STEPS = (10..50).step(10)
 
+    private_constant :BASE_URL, :LANGUAGE_CODE, :STEPS
+
     def initialize(
       language = Source::GoogleLanguage.new(LANGUAGE_CODE),
       user_agents = Source::UserAgents.new
