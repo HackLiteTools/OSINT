@@ -21,7 +21,7 @@ module Email
     private
 
     def list_from_source(source, email_domain)
-      source.responses(email_domain).reduce([]) do |all, body|
+      source.pages(email_domain).reduce([]) do |all, body|
         all.append(*list_from_body(search_section(body)))
       end
     end

@@ -8,7 +8,7 @@ module Source
       @filename = filename
     end
 
-    def responses(_phrase)
+    def pages(_phrase)
       file = File.open(@filename)
       begin
         [file.read]

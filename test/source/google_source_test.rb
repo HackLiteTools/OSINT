@@ -6,6 +6,6 @@ require "./lib/source/google_source"
 
 class GoogleSourceTest < Minitest::Test
   def test_returning_results
-    assert_match %r{</body>}, Source::GoogleSource.new.responses("foobar").first
+    assert_match %r{</body>}, Source::GoogleSource.new.pages("foobar").first
   end
 end
