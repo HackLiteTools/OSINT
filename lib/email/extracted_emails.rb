@@ -31,7 +31,8 @@ module Email
     end
 
     def list_from_body(body)
-      body.scan(/\b[A-Z0-9._-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/i)
+      domain = Regexp.escape(email_domain(@domain))
+      body.scan(/\b[a-z0-9._-]+#{domain}\b/i)
     end
 
     def search_section(body)

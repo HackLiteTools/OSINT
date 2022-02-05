@@ -15,7 +15,7 @@ class ExtractedEmailsTest < Minitest::Test
 
   def test_finding_in_results
     assert_equal(
-      %w[Aztecdecrypt@protonmail.com mmingard@protonmail.com Corpseworm@protonmail.com nrn_1@protonmail.com illinoispatriot@protonmail.com mikerupar@pm.me Decryptdocs@protonmail.com nicecupojoe@protonmail.com],
+      %w[Aztecdecrypt@protonmail.com mmingard@protonmail.com Corpseworm@protonmail.com nrn_1@protonmail.com illinoispatriot@protonmail.com Decryptdocs@protonmail.com nicecupojoe@protonmail.com],
       Email::ExtractedEmails.new("protonmail.com", Source::LocalSource.new(format("%s//fixtures/1-protonmail.html", File.dirname(__FILE__)))).list
     )
   end
