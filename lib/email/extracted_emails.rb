@@ -11,17 +11,18 @@ module Email
     end
 
     def list
-      list = @sources.map do |source|
-        list_from_source(source, email_domain(@domain))
+      list = @sources.reduce([]) do |all, source|
+        all.append(*list_from_source(source, email_domain(@domain)))
       end
+
       list.uniq
     end
 
     private
 
     def list_from_source(source, email_domain)
-      source.responses(email_domain).map do |response|
-        list_from_body(body(response))
+      source.responses(email_domain).reduce([]) do |all, body|
+        all.append(*list_from_body(search_section(body)))
       end
     end
 
@@ -33,8 +34,8 @@ module Email
       body.scan(/\b[A-Z0-9._-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/i)
     end
 
-    def body(response)
-      Nokogiri::HTML(response.body).at("body").inner_html
+    def search_section(body)
+      Nokogiri::HTML(body).at_css("#search").inner_html
     end
   end
 end

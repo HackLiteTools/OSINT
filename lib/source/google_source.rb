@@ -23,7 +23,7 @@ module Source
 
     def responses(phrase)
       STEPS.map do |step|
-        response(url(BASE_URL, phrase, @language, step), @user_agents)
+        response(url(BASE_URL, phrase, @language, step), @user_agents).body
       end
     end
 
