@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "minitest/autorun"
-require "net/http"
 require "./lib/source/google_source"
 
 class GoogleSourceTest < Minitest::Test
