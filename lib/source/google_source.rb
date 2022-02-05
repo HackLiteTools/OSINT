@@ -23,7 +23,7 @@ module Source
 
     def pages(phrase)
       STEPS.map do |step|
-        response(url(BASE_URL, phrase, @language, step), @user_agents).body
+        body(url(BASE_URL, phrase, @language, step), @user_agents)
       end
     end
 
@@ -46,15 +46,15 @@ module Source
       request
     end
 
-    def response(url, user_agents, limit = 10)
+    def body(url, user_agents, limit = 10)
       raise "Number of requests exceeded limit" if limit.zero?
 
       response = http(url).request(request(url, user_agents))
       case response
-      when Net::HTTPOK then response
-      when Net::HTTPRedirection then "Redirected to a captcha page"
-      when Net::HTTPRequestTimeOut then response(url, user_agents, limit - 1)
-      when Net::HTTPTooManyRequests then "Too many requests have been sent"
+      when Net::HTTPOK then response.body
+      when Net::HTTPRedirection then raise "Redirected to a captcha page"
+      when Net::HTTPRequestTimeOut then response(url, user_agents, limit - 1).body
+      when Net::HTTPTooManyRequests then raise "Too many requests have been sent"
       else
         raise "Request failed"
       end
