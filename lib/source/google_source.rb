@@ -3,7 +3,8 @@
 require "net/http"
 require "openssl"
 require_relative "google_language"
-require_relative "user_agents"
+require_relative "../http/request"
+require_relative "../http/user_agents"
 
 module Source
   class GoogleSource
@@ -15,7 +16,7 @@ module Source
 
     def initialize(
       language = Source::GoogleLanguage.new(LANGUAGE_CODE),
-      user_agents = Source::UserAgents.new
+      user_agents = Http::UserAgents.new
     )
       @language = language
       @user_agents = user_agents
@@ -23,41 +24,14 @@ module Source
 
     def pages(phrase)
       STEPS.map do |step|
-        body(url(BASE_URL, phrase, @language, step), @user_agents)
+        Http::Request.new(uri(BASE_URL, phrase, @language, step), @user_agents).response.body
       end
     end
 
     private
 
-    def url(base_url, phrase, language, step)
+    def uri(base_url, phrase, language, step)
       URI.parse(base_url + "?q=#{phrase}&lr=lang_#{language.code}&start=#{step}")
-    end
-
-    def http(url)
-      http = Net::HTTP.new(url.host, url.port)
-      http.use_ssl = true
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      http
-    end
-
-    def request(url, user_agents)
-      request = Net::HTTP::Get.new(url.request_uri)
-      request["User-Agent"] = user_agents.sample
-      request
-    end
-
-    def body(url, user_agents, limit = 10)
-      raise "Number of requests exceeded limit" if limit.zero?
-
-      response = http(url).request(request(url, user_agents))
-      case response
-      when Net::HTTPOK then response.body
-      when Net::HTTPRedirection then raise "Redirected to a captcha page"
-      when Net::HTTPRequestTimeOut then response(url, user_agents, limit - 1).body
-      when Net::HTTPTooManyRequests then raise "Too many requests have been sent"
-      else
-        raise "Request failed"
-      end
     end
   end
 end
